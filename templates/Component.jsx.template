@@ -1,0 +1,13 @@
+import bem from 'bem-cn-lite';
+
+import './{filename}.css';
+
+const cn = bem('{filenameLowerCase}');
+
+export default function {filename}(props) {
+    return (
+        <div className={cn()}>
+            
+        </div>
+    );
+}
