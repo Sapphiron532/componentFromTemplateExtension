@@ -21,14 +21,14 @@ function activate(context) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('extension.createComponent', function () {
+	let disposable = vscode.commands.registerCommand('extension.createComponent', function (folderPathObject) {
 		// The code you place here will be executed every time your command is executed
+		const folderPath = folderPathObject.fsPath;
+
 		vscode.window.showInputBox({ placeHolder: 'Имя нового компонента' }).then(filename => {
+			if(!filename) return;
 
-			const fsPath = vscode.window.activeTextEditor.document.uri.fsPath;
-			const dir = fsPath.substring(0, fsPath.lastIndexOf('/'));
-
-			const targetDir = `${dir}/${filename}`;
+			const targetDir = `${folderPath}/${filename}`;
 
 			if (!fs.existsSync(targetDir)){
 				fs.mkdirSync(targetDir);
@@ -45,6 +45,14 @@ function activate(context) {
 			fs.writeFileSync(`${targetDir}/index.js`, preparedIndexJsContent); 
 			fs.writeFileSync(`${targetDir}/${filename}.jsx`, preparedComponentJsxContent); 
 			fs.writeFileSync(`${targetDir}/${filename}.css`, preparedStyleCssContent); 
+
+			// vscode.workspace.openTextDocument();
+			vscode.workspace.openTextDocument(vscode.Uri.file(`${targetDir}/${filename}.jsx`)).then(doc => vscode.window.showTextDocument(doc))
+
+			// var openPath = vscode.Uri.parse("file:///" + filePath); //A request file path
+			// vscode.workspace.openTextDocument(openPath).then(doc => {
+			// vscode.window.showTextDocument(doc);
+			// });
 
 		});
 
